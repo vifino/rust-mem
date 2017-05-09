@@ -24,7 +24,7 @@ impl MemoryCreator<MemVector> for MemVector {
 }
 
 impl MemoryBlock for MemVector {
-    fn get_size(&self) -> Addr {
+    fn get_size(&self) -> usize {
         self.size
     }
 
@@ -37,10 +37,7 @@ impl MemoryBlock for MemVector {
 
     fn set(&mut self, addr: Addr, byte: Byte) -> Result<(), MemError> {
         if addr > self.size {
-            return Err(MemError::OutOfRange {
-                           at: addr,
-                           max: self.size,
-                       });
+            return Err(MemError::OutOfRange { at: addr, max: self.size });
         }
         self.mem[addr] = byte;
         Ok(())
@@ -57,7 +54,7 @@ mod tests {
 
     #[test]
     fn memvec_works_basic() {
-        let mut mem = MemVector::new(0xFF);
+        let mut mem = Box::new(MemVector::new(0xFF));
         mem.set(0x00, 101).unwrap();
         mem.flush().unwrap();
         assert_eq!(101, mem.get(0x00).unwrap());
@@ -65,7 +62,7 @@ mod tests {
 
     #[test]
     fn memvec_works_all() {
-        let mut mem = MemVector::new(0xFF);
+        let mut mem = Box::new(MemVector::new(0xFF));
         let sz = mem.get_size();
         assert_eq!(0xFF, sz);
 
@@ -82,9 +79,7 @@ mod tests {
         }
 
         // Delete stuff.
-        for i in 0..sz + 1 {
-            mem.delete(i).unwrap()
-        }
+        mem.delete(0, sz).unwrap();
 
         mem.flush().unwrap();
 

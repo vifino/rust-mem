@@ -4,33 +4,41 @@
 
 use errors::MemError;
 
-// Define address type/size.
-// Originally, I wanted to make it use generics,
-// but that got messy quick.
+/// Address type/size.
+/// Just a simple alias to usize for easier-to-read code. (In my opinion, obviously.)
+/// Originally, I wanted to make it use generics,
+/// but that got messy really quick.
 pub type Addr = usize;
 
-// Byte.
+/// Byte.
+/// Convenience alias.
 pub type Byte = u8;
 
 /// Simple trait for a finite memory block.
-///
 pub trait MemoryBlock {
     /// Get the block's accessible size.
-    /// Simply the highest address.
+    /// Simply the highest address,
+    /// NOT the number of addresses.
     fn get_size(&self) -> Addr;
 
     /// Set a byte at address.
     fn set(&mut self, Addr, Byte) -> Result<(), MemError>;
+
     /// Get a byte at address.
     /// Returns `Ok(X)` on success, where X will be the byte.
-    /// Or `Err(error)` on failure.
     fn get(&self, Addr) -> Result<Byte, MemError>;
 
     /// Delete data at address.
     /// May allow the block to efficiently delete it, marking it as unused.
     /// This could allow the block to do wear leveling, for example.
-    fn delete(&mut self, addr: Addr) -> Result<(), MemError> {
-        self.set(addr, 0)
+    fn delete(&mut self, from: Addr, to: Addr) -> Result<(), MemError> {
+        if from == to {
+            return self.set(from, 0);
+        }
+        for i in from..to {
+            self.set(i, 0)?;
+        }
+        self.set(to, 0)
     }
 
     /// Flush writes out.
@@ -46,6 +54,8 @@ pub trait MemoryBlock {
 // For convenience, mostly.
 pub trait MemoryCreator<T> {
     /// Returns a `MemoryBlock` of size `size`.
+    /// `size` being the highest address,
+    /// NOT number of addresses.
     fn new(size: Addr) -> T;
 }
 
@@ -54,5 +64,5 @@ pub trait MemoryCreator<T> {
 ///
 /// Useful for invalid access checkers, debuggers, etc....
 pub trait MemoryMiddlewareCreator<T> {
-    fn new<M: MemoryBlock>(M) -> T;
+    fn new<M: MemoryBlock>(Box<M>) -> T;
 }
