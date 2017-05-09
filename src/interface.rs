@@ -29,13 +29,17 @@ pub trait MemoryBlock {
     /// Delete data at address.
     /// May allow the block to efficiently delete it, marking it as unused.
     /// This could allow the block to do wear leveling, for example.
-    fn delete(&mut self, Addr) -> Result<(), MemError>;
+    fn delete(&mut self, addr: Addr) -> Result<(), MemError> {
+        self.set(addr, 0)
+    }
 
     /// Flush writes out.
     /// In case it does any form of caching, calling this method
     /// ensures it has written all the data it needs to write.
     /// Or, well, it fails otherwise.
-    fn flush(&mut self) -> Result<(), MemError>;
+    fn flush(&mut self) -> Result<(), MemError> {
+        Ok(())
+    }
 }
 
 /// Simple `new(size)` trait for backends.

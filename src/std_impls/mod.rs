@@ -45,17 +45,6 @@ impl MemoryBlock for MemVector {
         self.mem[addr] = byte;
         Ok(())
     }
-
-    fn delete(&mut self, addr: Addr) -> Result<(), MemError> {
-        self.mem[addr] = 0;
-        Ok(())
-
-    }
-
-    fn flush(&mut self) -> Result<(), MemError> {
-        // nop.
-        Ok(())
-    }
 }
 
 ///////////
