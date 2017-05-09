@@ -1,4 +1,4 @@
-//! #mem
+//! # mem
 //! A rather generic memory (block) interface.
 //! Use Mutexes if you need thread safety, this doesn't provide any.
 //!

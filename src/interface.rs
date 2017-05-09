@@ -22,7 +22,7 @@ pub trait MemoryBlock {
     /// Set a byte at address.
     fn set(&mut self, Addr, Byte) -> Result<(), MemError>;
     /// Get a byte at address.
-    /// Returns `Ok(X)`` on success, where X will be the byte.
+    /// Returns `Ok(X)` on success, where X will be the byte.
     /// Or `Err(error)` on failure.
     fn get(&self, Addr) -> Result<Byte, MemError>;
 
