@@ -24,7 +24,7 @@ impl MemoryCreator<MemVector> for MemVector {
 }
 
 impl MemoryBlock for MemVector {
-    fn get_size(&self) -> usize {
+    fn get_size(&self) -> Addr {
         self.size
     }
 

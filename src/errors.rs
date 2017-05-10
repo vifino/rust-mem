@@ -20,6 +20,7 @@ pub enum MemError {
     TooBig { given: Addr, max: Addr },
     TooSmall { given: Addr, min: Addr },
     NotImplemented,
+    NotApplicable { at: Addr },
 }
 
 impl fmt::Display for MemError {
@@ -64,6 +65,9 @@ impl fmt::Display for MemError {
             MemError::NotImplemented => {
                 write!(f, "MemoryBlock Error: not implemented")
             }
+            MemError::NotApplicable { at } => {
+                write!(f, "MemoryBlock Error: action not applicable @ {:#X}", at)
+            }
         }
     }
 }
@@ -82,6 +86,7 @@ impl StdError for MemError {
             MemError::TooBig { given: _, max: _ } => "too big",
             MemError::TooSmall { given: _, min: _ } => "too small",
             MemError::NotImplemented => "not implemented",
+            MemError::NotApplicable { at: _ } => "not applicable",
         }
     }
 }
