@@ -17,7 +17,7 @@ mod errors;
 mod interface;
 mod helpers;
 
-mod std_impls;
+pub mod std_impls;
 
 // Export the sub modules globally at crate level.
 pub use errors::*;
