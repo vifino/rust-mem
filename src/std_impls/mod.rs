@@ -37,7 +37,7 @@ impl MemoryBlock for MemVector {
 
     fn set(&mut self, addr: Addr, byte: Byte) -> Result<(), MemError> {
         if addr > self.size {
-            return Err(MemError::OutOfRange { at: addr, max: self.size });
+            return Err(MemError::TooBig { given: addr, max: self.size });
         }
         self.mem[addr] = byte;
         Ok(())

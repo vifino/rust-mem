@@ -1,6 +1,6 @@
 [package]
 name = "mem"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Adrian Pistol <vifino@tty.sh>"]
 
 [dependencies]

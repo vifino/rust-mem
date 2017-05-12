@@ -9,25 +9,31 @@ use interface::*;
 
 #[derive(Debug)]
 pub enum MemError {
-    OutOfRange { at: Addr, max: Addr },
+    TooBig { given: Addr, max: Addr },
+    TooSmall { given: Addr, min: Addr },
+    InvalidAddr { addr: Addr },
     ReadOnly { at: Addr, globally: bool },
     WriteOnly { at: Addr, globally: bool },
     UnalignedAccess { at: Addr, alignment: Addr },
     NoData { at: Addr },
     InvalidData { at: Addr },
-    HardwareFault { at: Addr },
+    HardwareFault { at: Addr, reason: String },
     Uninitialized { at: Addr },
-    TooBig { given: Addr, max: Addr },
-    TooSmall { given: Addr, min: Addr },
-    NotImplemented,
     NotApplicable { at: Addr },
+    NotImplemented,
 }
 
 impl fmt::Display for MemError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            MemError::OutOfRange { at, max } => {
-                write!(f, "MemoryBlock Error: Access out of range: {:#X}, max {:#X}", at, max)
+            MemError::TooBig { given, max } => {
+                write!(f, "MemoryBlock Error: {:#X} is too big, {:#X} is the maximum", given, max)
+            }
+            MemError::TooSmall { given, min } => {
+                write!(f, "MemoryBlock Error: {:#X} is too small, {:#X} is the minimum", given, min)
+            }
+            MemError::InvalidAddr { addr } => {
+                write!(f, "MemoryBlock Error: Invalid address: {:#X}", addr)
             }
             MemError::ReadOnly { at, globally: g } => {
                 let errtext = if g {
@@ -50,17 +56,11 @@ impl fmt::Display for MemError {
             }
             MemError::NoData { at } => write!(f, "MemoryBlock Error: {:#X}: No data", at),
             MemError::InvalidData { at } => write!(f, "MemoryBlock Error: {:#X}: Invalid data", at),
-            MemError::HardwareFault { at } => {
-                write!(f, "MemoryBlock Error: Hardware fault occured @ {:#X}", at)
+            MemError::HardwareFault { at, ref reason } => {
+                write!(f, "MemoryBlock Error: Hardware fault occured @ {:#X}: {}", at, reason)
             }
             MemError::Uninitialized { at } => {
                 write!(f, "MemoryBlock Error: {:#X} is uninitialized", at)
-            }
-            MemError::TooBig { given, max } => {
-                write!(f, "MemoryBlock Error: {:#X} is too big, {:#X} is the maximum", given, max)
-            }
-            MemError::TooSmall { given, min } => {
-                write!(f, "MemoryBlock Error: {:#X} is too small, {:#X} is the minimum", given, min)
             }
             MemError::NotImplemented => {
                 write!(f, "MemoryBlock Error: not implemented")
@@ -75,16 +75,16 @@ impl fmt::Display for MemError {
 impl StdError for MemError {
     fn description(&self) -> &str {
         match *self {
-            MemError::OutOfRange { at: _, max: _ } => "memory access out of range",
+            MemError::TooBig { given: _, max: _ } => "too big",
+            MemError::TooSmall { given: _, min: _ } => "too small",
+            MemError::InvalidAddr { addr: _ } => "invalid address",
             MemError::ReadOnly { at: _, globally: _ } => "memory read only",
             MemError::WriteOnly { at: _, globally: _ } => "memory write only",
             MemError::UnalignedAccess { at: _, alignment: _ } => "unaligned access to memory",
             MemError::NoData { at: _ } => "no data",
             MemError::InvalidData { at: _ } => "invalid data",
-            MemError::HardwareFault { at: _ } => "hardware fault",
+            MemError::HardwareFault { at: _, reason: _ } => "hardware fault",
             MemError::Uninitialized { at: _ } => "uninitialized",
-            MemError::TooBig { given: _, max: _ } => "too big",
-            MemError::TooSmall { given: _, min: _ } => "too small",
             MemError::NotImplemented => "not implemented",
             MemError::NotApplicable { at: _ } => "not applicable",
         }
