@@ -17,7 +17,7 @@ pub enum MemError {
     UnalignedAccess { at: Addr, alignment: Addr },
     NoData { at: Addr },
     InvalidData { at: Addr },
-    HardwareFault { at: Addr, reason: String },
+    HardwareFault { at: Addr, reason: &'static str },
     Uninitialized { at: Addr },
     NotApplicable { at: Addr },
     NotImplemented,
