@@ -33,12 +33,12 @@ pub trait MemoryBlock {
     /// This could allow the block to do wear leveling, for example.
     fn delete(&mut self, from: Addr, to: Addr) -> Result<(), Error> {
         if from == to {
-            return self.set(from, 0);
+            self.set(from, 0).chain_err(|| format!("failure to delete {:#X}", from))?;
         }
         for i in from..to {
-            self.set(i, 0)?;
+            self.set(i, 0).chain_err(|| format!("failure to delete byte {} in {:#X}-{:#X}", i-from, from, to))?;
         }
-        self.set(to, 0)
+        self.set(to, 0).chain_err(|| format!("failure to delete {:#X}", to))
     }
 
     /// Flush writes out.
