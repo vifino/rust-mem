@@ -1,7 +1,7 @@
 // Basic mem impls on STD basis.
 
 use interface::*;
-use errors::MemError;
+use errors::*;
 
 /// Simple `Vec`-based memory block.
 /// Should suffice basic RAM needs.
@@ -28,16 +28,16 @@ impl MemoryBlock for MemVector {
         self.size
     }
 
-    fn get(&self, addr: Addr) -> Result<Byte, MemError> {
+    fn get(&self, addr: Addr) -> Result<Byte, Error> {
         match self.mem.get(addr) {
             Some(b) => Ok(*b),
-            None => Err(MemError::NoData { at: addr }),
+            None => bail!(ErrorKind::NoData(addr)),
         }
     }
 
-    fn set(&mut self, addr: Addr, byte: Byte) -> Result<(), MemError> {
+    fn set(&mut self, addr: Addr, byte: Byte) -> Result<(), Error> {
         if addr > self.size {
-            return Err(MemError::TooBig { given: addr, max: self.size });
+            bail!(ErrorKind::TooBig(addr, self.size));
         }
         self.mem[addr] = byte;
         Ok(())

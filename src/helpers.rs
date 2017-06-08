@@ -3,25 +3,25 @@
 /////////////
 
 use interface::*;
-use errors::MemError;
+use errors::*;
 
 use std::cmp;
 
 /// Copy all of the `src` memory block to `dst`.
 /// Returns `Ok(writtenbytes)` to signify `writtenbytes` bytes have been copied,
 /// or `Err(error)` if some error happened during copying.
-pub fn copy<T: MemoryBlock>(src: &T, dst: &mut T) -> Result<Addr, MemError> {
+pub fn copy<T: MemoryBlock>(src: &T, dst: &mut T) -> Result<Addr, Error> {
     let src_sz = src.get_size();
     let dst_sz = dst.get_size();
     if src_sz > dst_sz {
-        return Err(MemError::TooBig { given: src_sz, max: dst_sz});
+        bail!(ErrorKind::TooBig(src_sz, dst_sz));
     }
     for i in 0..src_sz {
         let status = match src.get(i) {
             Ok(byte) => dst.set(i, byte),
-            Err(e) => return Err(e),
+            Err(e) => Err(e),
         };
-        try!(status);
+        status.chain_err(|| "in copy helper")?;
     }
     Ok(src_sz)
 }
@@ -30,7 +30,7 @@ pub fn copy<T: MemoryBlock>(src: &T, dst: &mut T) -> Result<Addr, MemError> {
 /// Copy the contents of `src` at `from` to `to` to `dst`, starting at `pos`.
 /// Returns `Ok(writtenbytes)` to signify `writtenbytes` bytes have been copied,
 /// or `Err(error)` if some error happened during copying.
-pub fn copy_at<T: MemoryBlock>(src: &T, dst: &mut T, from: Addr, to: Addr, pos: Addr) -> Result<Addr, MemError> {
+pub fn copy_at<T: MemoryBlock>(src: &T, dst: &mut T, from: Addr, to: Addr, pos: Addr) -> Result<Addr, Error> {
     let src_sz = src.get_size();
     let dst_sz = dst.get_size();
 
@@ -39,10 +39,10 @@ pub fn copy_at<T: MemoryBlock>(src: &T, dst: &mut T, from: Addr, to: Addr, pos: 
 
     // Handle invalid cases.
     if (lowest + numbytes) > src_sz {
-        return Err(MemError::TooBig { given: (lowest + numbytes), max: src_sz});
+        bail!(ErrorKind::TooBig(lowest + numbytes, src_sz));
     };
     if (pos + numbytes) > dst_sz {
-        return Err(MemError::TooBig { given: (pos + numbytes), max: dst_sz});
+        bail!(ErrorKind::TooBig(pos + numbytes, dst_sz));
     };
 
     // Actual copying
@@ -52,9 +52,9 @@ pub fn copy_at<T: MemoryBlock>(src: &T, dst: &mut T, from: Addr, to: Addr, pos: 
                 let dstpos = pos + (i - lowest);
                 dst.set(dstpos, byte)
             },
-            Err(e) => return Err(e),
+            Err(e) => Err(e),
         };
-        try!(status);
+        status.chain_err(|| "in copy_at helper")?;
     }
     Ok(numbytes)
 }

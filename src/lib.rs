@@ -11,15 +11,20 @@
 //! Or some sort of remote memory interface. Or a live memory debugger/editor for an emulator!
 //! Let your imagination go wild! :)
 
+// Errors
+#![recursion_limit = "1024"]
+
+#[macro_use]
+extern crate error_chain;
+
 // Modules
 // Since this crate is split over a couple of files, this is needed.
-mod errors;
+pub mod errors;
 mod interface;
 mod helpers;
 
 pub mod std_impls;
 
 // Export the sub modules globally at crate level.
-pub use errors::*;
 pub use interface::*;
 pub use helpers::*;

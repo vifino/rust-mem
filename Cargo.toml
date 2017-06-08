@@ -1,6 +1,7 @@
 [package]
 name = "mem"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Adrian Pistol <vifino@tty.sh>"]
 
 [dependencies]
+error-chain = "0.10.0"
