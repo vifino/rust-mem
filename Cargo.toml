@@ -1,7 +1,14 @@
 [package]
 name = "mem"
+homepage = "https://github.com/vifino/rust-mem"
+repository = "https://github.com/vifino/rust-mem"
 version = "0.4.0"
 authors = ["Adrian Pistol <vifino@tty.sh>"]
+license = "MIT"
+license-file = "LICENSE"
+description = """
+mem, a generic finite memory block abstraction, perfect for emulators.
+"""
 
 [dependencies]
 error-chain = "0.10.0"
