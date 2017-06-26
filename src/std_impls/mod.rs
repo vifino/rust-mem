@@ -44,6 +44,9 @@ impl MemoryBlock for MemVector {
     }
 }
 
+impl MemoryBlock32be for MemVector {}
+impl MemoryBlock32le for MemVector {}
+
 ///////////
 // Tests //
 ///////////
@@ -87,5 +90,21 @@ mod tests {
         for i in 0..sz + 1 {
             assert_eq!(0, mem.get(i).unwrap());
         }
+    }
+    #[test]
+    fn memvec_works_32bit() {
+        let mut mem = Box::new(MemVector::new(0xFF));
+        let sz = mem.get_size();
+        assert_eq!(0xFF, sz);
+
+        // Set stuff.
+        mem.set32be(0, 0x12345678).unwrap();
+        mem.set32le(4, 0x12345678).unwrap();
+
+        mem.flush().unwrap();
+
+        // Get stuff.
+        assert_eq!(0x12345678, mem.get32be(0).unwrap());
+        assert_eq!(0x12345678, mem.get32le(4).unwrap());
     }
 }

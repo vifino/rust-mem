@@ -2,6 +2,9 @@
 // INTERFACES //
 ////////////////
 
+extern crate byteorder;
+use self::byteorder::{ByteOrder, BigEndian, LittleEndian};
+
 use errors::*;
 
 /// Address type/size.
@@ -47,6 +50,47 @@ pub trait MemoryBlock {
     /// Or, well, it fails otherwise.
     fn flush(&mut self) -> Result<(), Error> {
         Ok(())
+    }
+}
+
+/// Subtrait for 32 bit big-endian interface
+pub trait MemoryBlock32be: MemoryBlock {
+    /// Set a 32 bit value (4 bytes) in Big Endian format.
+    fn set32be(&mut self, addr: Addr, data: u32) -> Result<(), Error> {
+        let mut bytes = [0; 4];
+        BigEndian::write_u32(&mut bytes, data);
+        for i in 0..4 {
+            self.set(addr + i, bytes[i]).chain_err(|| format!("failure to set32be {:#X} in byte {}", addr, i))?;
+        }
+        Ok(())
+    }
+    /// Get a 32 bit value (4 bytes) stored in Big Endian format.
+    fn get32be(&mut self, addr: Addr) -> Result<u32, Error> {
+        let mut bytes = [0; 4];
+        for i in 0..4 {
+            bytes[i] = self.get(addr + i).chain_err(|| format!("failure to get32be {:#X} in byte {}", addr, i))?;
+        }
+        Ok(BigEndian::read_u32(&bytes))
+    }
+}
+/// Subtrait for 32 bit little-endian interface
+pub trait MemoryBlock32le: MemoryBlock {
+    /// Set a 32 bit value (4 bytes) in Little Endian format.
+    fn set32le(&mut self, addr: Addr, data: u32) -> Result<(), Error> {
+        let mut bytes = [0; 4];
+        LittleEndian::write_u32(&mut bytes, data);
+        for i in 0..4 {
+            self.set(addr + i, bytes[i]).chain_err(|| format!("failure to set32le {:#X} in byte {}", addr, i))?;
+        }
+        Ok(())
+    }
+    /// Get a 32 bit value (4 bytes) stored in Little Endian format.
+    fn get32le(&mut self, addr: Addr) -> Result<u32, Error> {
+        let mut bytes = [0; 4];
+        for i in 0..4 {
+            bytes[i] = self.get(addr + i).chain_err(|| format!("failure to get32le {:#X} in byte {}", addr, i))?;
+        }
+        Ok(LittleEndian::read_u32(&bytes))
     }
 }
 
