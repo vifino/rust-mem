@@ -58,5 +58,10 @@ error_chain! {
             description("not applicable")
             display("MemoryBlock Error: Action not applicable at {:#X}", at)
         }
+
+        EndianessHelperFail(helpername: &'static str, at: Addr, in_byte: Addr) {
+            description("error in endian helper")
+            display("MemoryBlock Error: Failure in {} @ {:#X}, in byte {}", helpername, at, in_byte)
+        }
     }
 }
