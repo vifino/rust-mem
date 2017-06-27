@@ -65,7 +65,7 @@ pub trait MemoryBlock32be: MemoryBlock {
         Ok(())
     }
     /// Get a 32 bit value (4 bytes) stored in Big Endian format.
-    fn get32be(&mut self, addr: Addr) -> Result<u32, Error> {
+    fn get32be(&self, addr: Addr) -> Result<u32, Error> {
         let mut bytes = [0; 4];
         for i in 0..4 {
             bytes[i] = self.get(addr + i).chain_err(|| format!("failure to get32be {:#X} in byte {}", addr, i))?;
@@ -85,7 +85,7 @@ pub trait MemoryBlock32le: MemoryBlock {
         Ok(())
     }
     /// Get a 32 bit value (4 bytes) stored in Little Endian format.
-    fn get32le(&mut self, addr: Addr) -> Result<u32, Error> {
+    fn get32le(&self, addr: Addr) -> Result<u32, Error> {
         let mut bytes = [0; 4];
         for i in 0..4 {
             bytes[i] = self.get(addr + i).chain_err(|| format!("failure to get32le {:#X} in byte {}", addr, i))?;
