@@ -60,7 +60,7 @@ pub trait MemoryBlock32be: MemoryBlock {
         let mut bytes = [0; 4];
         BigEndian::write_u32(&mut bytes, data);
         for i in 0..4 {
-            self.set(addr + i, bytes[i]).chain_err(|| ErrorKind::EndianessHelperFail("set32be", addr, i))?;
+            self.set(addr + i, bytes[i])?; //.chain_err(|| ErrorKind::EndianessHelperFail("set32be", addr, i))?;
         }
         Ok(())
     }
@@ -68,7 +68,7 @@ pub trait MemoryBlock32be: MemoryBlock {
     fn get32be(&self, addr: Addr) -> Result<u32, Error> {
         let mut bytes = [0; 4];
         for i in 0..4 {
-            bytes[i] = self.get(addr + i).chain_err(|| ErrorKind::EndianessHelperFail("get32be", addr, i))?;
+            bytes[i] = self.get(addr + i)?; //.chain_err(|| ErrorKind::EndianessHelperFail("get32be", addr, i))?;
         }
         Ok(BigEndian::read_u32(&bytes))
     }
@@ -80,7 +80,7 @@ pub trait MemoryBlock32le: MemoryBlock {
         let mut bytes = [0; 4];
         LittleEndian::write_u32(&mut bytes, data);
         for i in 0..4 {
-            self.set(addr + i, bytes[i]).chain_err(|| ErrorKind::EndianessHelperFail("set32le", addr, i))?;
+            self.set(addr + i, bytes[i])?; //.chain_err(|| ErrorKind::EndianessHelperFail("set32le", addr, i))?;
         }
         Ok(())
     }
@@ -88,7 +88,7 @@ pub trait MemoryBlock32le: MemoryBlock {
     fn get32le(&self, addr: Addr) -> Result<u32, Error> {
         let mut bytes = [0; 4];
         for i in 0..4 {
-            bytes[i] = self.get(addr + i).chain_err(|| ErrorKind::EndianessHelperFail("get32le", addr, i))?;
+            bytes[i] = self.get(addr + i)?; //.chain_err(|| ErrorKind::EndianessHelperFail("get32le", addr, i))?;
         }
         Ok(LittleEndian::read_u32(&bytes))
     }
