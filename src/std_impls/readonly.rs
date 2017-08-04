@@ -1,12 +1,12 @@
-//! Read-only wrapper for MemoryBlocks.
-//! Raises an error if you try to write to it.
-//! Reading simply gets passed through.
-//! Useful in cases where you dynamically dispatch between different blocks.
-
+// Readonly middleware
 use interface::*;
 use errors::*;
 
-struct ReadOnly<M: MemoryBlock> {
+/// Read-only wrapper for MemoryBlocks.
+/// Raises an error if you try to write to it.
+/// Reading simply gets passed through.
+/// Useful in cases where you dynamically dispatch between different blocks.
+pub struct ReadOnly<M: MemoryBlock> {
     mem: Box<M>,
 }
 
