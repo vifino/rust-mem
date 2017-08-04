@@ -107,6 +107,6 @@ pub trait MemoryCreator<T> {
 /// another memory block, returning one itself.
 ///
 /// Useful for invalid access checkers, debuggers, etc....
-pub trait MemoryMiddlewareCreator<T> {
-    fn new<M: MemoryBlock>(Box<M>) -> T;
+pub trait MemoryMiddlewareCreator<M> {
+    fn new(Box<M>) -> Self;
 }

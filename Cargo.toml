@@ -2,7 +2,7 @@
 name = "mem"
 homepage = "https://github.com/vifino/rust-mem"
 repository = "https://github.com/vifino/rust-mem"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["Adrian Pistol <vifino@tty.sh>"]
 license = "MIT"
 keywords = ["emulation", "memory"]
