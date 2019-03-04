@@ -11,5 +11,5 @@ mem, a generic finite memory block abstraction, perfect for emulators.
 """
 
 [dependencies]
-error-chain = "0.10.0"
-byteorder = "1.0.0"
+error-chain = "0"
+byteorder = "1"
